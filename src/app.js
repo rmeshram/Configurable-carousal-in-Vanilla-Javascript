@@ -6,25 +6,12 @@ import reducers from "./reducer.js"
 const initState = {
   config,
   currentIndex: 0,
-  autoSlide: false,
+  autoSlide: true,
   slideInterval: 3000,
-  maxSlide:1
+  maxSlide: 2
 }
 
 const store = createStore(reducers, initState);
-
-const onNext = function () {
-  store.dispatch({ type: "NEXT" });
-}
-
-const onPrevious = function () {
-  store.dispatch({ type: "PREVIOUS" });
-};
-
-const handleClick = (event) => {
-  document.querySelector(".left-arrow").addEventListener('click', onPrevious)
-  document.querySelector(".right-arrow").addEventListener('click', onNext)
-}
 
 class App {
   constructor() {
@@ -38,14 +25,13 @@ class App {
   }
 
   render(state) {
-    document.querySelector('.container').innerHTML = `${Carousal(state)}`
+    const container = document.querySelector('.container');
+    container.innerHTML = "";
+    const Component = store.connect(null, mapDispatchToProps)(Carousal);
+    container.appendChild(Component)
   }
 
   attachEvents(state) {
-    if(state.autoSlide) {
-      setInterval(onNext, state.slideInterval)
-    }
-    document.addEventListener('click', handleClick)
   }
 
   init() {
@@ -53,6 +39,17 @@ class App {
   }
 }
 
+
+function mapDispatchToProps(dispatch, state) {
+  return {
+    onNext: function () {
+      dispatch({ type: "NEXT" });
+    },
+    onPrevious: function () {
+      dispatch({ type: "PREVIOUS" });
+    }
+  }
+}
 const app = new App();
 console.log(app.init())
 
