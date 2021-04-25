@@ -13,10 +13,16 @@ export default (reducers, initialState) => {
   const subscribe = (listener) => {
     listener && listener.constructor === Function && listeners.push(listener);
   };
+  const connect = (mapStateToProps = () => {}, mapDispatchToProps)  => {
+    return (Component) => {
+     return Component({...state, ...mapDispatchToProps(dispatch)})
+    }
+  }
 
   return {
     dispatch,
     subscribe,
     getState,
+    connect
   };
 };
